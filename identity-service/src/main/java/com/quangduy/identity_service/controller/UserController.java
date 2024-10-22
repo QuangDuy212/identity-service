@@ -14,40 +14,46 @@ import org.springframework.web.bind.annotation.RestController;
 import com.quangduy.identity_service.dto.request.UserCreationRequest;
 import com.quangduy.identity_service.dto.request.UserUpdateRequest;
 import com.quangduy.identity_service.dto.response.ApiResponse;
+import com.quangduy.identity_service.dto.response.UserResponse;
 import com.quangduy.identity_service.entity.User;
 import com.quangduy.identity_service.service.UserService;
 
 import jakarta.validation.Valid;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @RestController
 @RequestMapping("/users")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserController {
-    private UserService userService;
+    UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @PostMapping
-    public ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) {
-        ApiResponse<User> apiResponse = new ApiResponse<>();
+    public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(this.userService.createUser(request));
         apiResponse.setMessage("Create success");
         return apiResponse;
     }
 
     @GetMapping
-    public List<User> getUsers() {
+    public List<UserResponse> getUsers() {
         return this.userService.getUsers();
     }
 
     @GetMapping("/{userId}")
-    public User getUser(@PathVariable("userId") String userId) {
+    public UserResponse getUser(@PathVariable("userId") String userId) {
         return this.userService.getUser(userId);
     }
 
     @PutMapping("/{userId}")
-    public User updateUser(@PathVariable("userId") String userId,
+    public UserResponse updateUser(@PathVariable("userId") String userId,
             @RequestBody UserUpdateRequest request) {
         return this.userService.updateUser(userId, request);
     }
