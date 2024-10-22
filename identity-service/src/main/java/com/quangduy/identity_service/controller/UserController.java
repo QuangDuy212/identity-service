@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.quangduy.identity_service.dto.request.UserCreationRequest;
 import com.quangduy.identity_service.dto.request.UserUpdateRequest;
+import com.quangduy.identity_service.dto.response.ApiResponse;
 import com.quangduy.identity_service.entity.User;
 import com.quangduy.identity_service.service.UserService;
 
@@ -28,8 +29,11 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody @Valid UserCreationRequest request) {
-        return this.userService.createUser(request);
+    public ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) {
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(this.userService.createUser(request));
+        apiResponse.setMessage("Create success");
+        return apiResponse;
     }
 
     @GetMapping
