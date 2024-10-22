@@ -16,6 +16,8 @@ import com.quangduy.identity_service.dto.request.UserUpdateRequest;
 import com.quangduy.identity_service.entity.User;
 import com.quangduy.identity_service.service.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -26,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody UserCreationRequest request) {
+    public User createUser(@RequestBody @Valid UserCreationRequest request) {
         return this.userService.createUser(request);
     }
 
