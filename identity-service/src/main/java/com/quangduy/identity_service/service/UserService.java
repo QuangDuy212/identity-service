@@ -1,6 +1,6 @@
 package com.quangduy.identity_service.service;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.*;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,6 +11,7 @@ import com.quangduy.identity_service.dto.request.UserCreationRequest;
 import com.quangduy.identity_service.dto.request.UserUpdateRequest;
 import com.quangduy.identity_service.dto.response.UserResponse;
 import com.quangduy.identity_service.entity.User;
+import com.quangduy.identity_service.enums.Role;
 import com.quangduy.identity_service.exception.AppException;
 import com.quangduy.identity_service.exception.ErrorCode;
 import com.quangduy.identity_service.mapper.UserMapper;
@@ -18,6 +19,7 @@ import com.quangduy.identity_service.repository.UserRepository;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
@@ -26,10 +28,12 @@ import lombok.experimental.FieldDefaults;
 public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserResponse createUser(UserCreationRequest request) {
@@ -39,8 +43,10 @@ public class UserService {
             throw new AppException(ErrorCode.USER_EXISTED);
 
         user = this.userMapper.toUser(request);
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+        user.setRoles(roles);
         user = this.userRepository.save(user);
         return this.userMapper.toUserResponse(user);
     }
