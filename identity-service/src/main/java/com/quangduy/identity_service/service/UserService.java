@@ -3,6 +3,10 @@ package com.quangduy.identity_service.service;
 import java.util.*;
 import java.util.stream.*;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,8 +26,10 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserService {
     UserRepository userRepository;
@@ -51,16 +57,30 @@ public class UserService {
         return this.userMapper.toUserResponse(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getUsers() {
+        log.info("In method get user");
         return this.userRepository.findAll()
                 .stream()
                 .map(i -> this.userMapper.toUserResponse(i))
                 .collect(Collectors.toList());
     }
 
+    @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUser(String userId) {
+        log.info("In method get user by id");
         User user = this.userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        return this.userMapper.toUserResponse(user);
+    }
+
+    public UserResponse getMyInfo() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        User user = this.userRepository.findByUsername(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
         return this.userMapper.toUserResponse(user);
     }
 

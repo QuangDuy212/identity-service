@@ -2,6 +2,7 @@ package com.quangduy.identity_service.exception;
 
 public enum ErrorCode {
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error"),
+    SUCCESS(1000, "Success"),
     INVALID_KEY(1001, "Invalid message key"),
     USER_EXISTED(1002, "User existed"),
     USERNAME_INVALID(1003, "Username must be at least 3 characters"),

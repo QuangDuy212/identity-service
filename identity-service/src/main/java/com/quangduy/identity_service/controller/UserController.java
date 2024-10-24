@@ -18,6 +18,7 @@ import com.quangduy.identity_service.dto.request.UserUpdateRequest;
 import com.quangduy.identity_service.dto.response.ApiResponse;
 import com.quangduy.identity_service.dto.response.UserResponse;
 import com.quangduy.identity_service.entity.User;
+import com.quangduy.identity_service.exception.ErrorCode;
 import com.quangduy.identity_service.service.UserService;
 
 import jakarta.validation.Valid;
@@ -54,13 +55,25 @@ public class UserController {
         authentication.getAuthorities().forEach(
                 i -> log.info(i.getAuthority()));
         return ApiResponse.<List<UserResponse>>builder()
+                .code(ErrorCode.SUCCESS.getCode())
                 .result(this.userService.getUsers())
                 .build();
     }
 
     @GetMapping("/{userId}")
-    public UserResponse getUser(@PathVariable("userId") String userId) {
-        return this.userService.getUser(userId);
+    public ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
+        return ApiResponse.<UserResponse>builder()
+                .code(ErrorCode.SUCCESS.getCode())
+                .result(this.userService.getUser(userId))
+                .build();
+    }
+
+    @GetMapping("/myInfo")
+    public ApiResponse<UserResponse> getMyInfo() {
+        return ApiResponse.<UserResponse>builder()
+                .code(ErrorCode.SUCCESS.getCode())
+                .result(this.userService.getMyInfo())
+                .build();
     }
 
     @PutMapping("/{userId}")
