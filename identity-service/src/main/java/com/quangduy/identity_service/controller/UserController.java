@@ -17,14 +17,11 @@ import com.quangduy.identity_service.dto.request.UserCreationRequest;
 import com.quangduy.identity_service.dto.request.UserUpdateRequest;
 import com.quangduy.identity_service.dto.response.ApiResponse;
 import com.quangduy.identity_service.dto.response.UserResponse;
-import com.quangduy.identity_service.entity.User;
 import com.quangduy.identity_service.exception.ErrorCode;
 import com.quangduy.identity_service.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
